@@ -8,9 +8,7 @@ export async function handleDownload(runName) {
     toast.info(`${runName} Report downloaded is in Progress`);
     const Endpoint = `${apiEndPoint}${runName}`;
     const response = await http.get(Endpoint);
-    var [, fileName] = response.headers["content-disposition"].split(
-      "filename="
-    );
+    var fileName = `${runName}_report.xls`;
     var blob = new Blob([response.data], { type: "application/xls" });
     var link = document.createElement("a");
     link.href = window.URL.createObjectURL(blob);
