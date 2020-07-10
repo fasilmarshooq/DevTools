@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Queries>
+  <Query Name="GetRegressionStatus">
+    Select  Distinct top {0} rh.RunName,
+    (Select count(*) from ScenarioHeader where RunHeaderID = rh.RunHeaderID and ScenarioRunStatus = 'Completed Sucessfully' ) Passed,
+    (Select count(*) from ScenarioHeader where RunHeaderID = rh.RunHeaderID and ScenarioRunStatus = 'Completed With Errors' ) Failed,
+    CAST((DATEDIFF(MINUTE,rh.StartTime,rh.CompletedTime)/60.00)AS DECIMAL(10,2)) TimeTaken,
+    rh.RunHeaderID
+    from runheader rh
+    Join ScenarioHeader sh on rh.RunHeaderID = sh.RunHeaderID
+    where rh.runname like '{1}%'
+    and  rh.site like '%{2}%'
+    Order by rh.RunHeaderID desc
+  </Query>
+  <Query Name="GetScenarioStatus">
+    Select sh.ScenarioName,
+    sh.ModuleName,
+    CAST((DATEDIFF(MINUTE,sh.StartTime,sh.CompletedTime)/60.00)AS DECIMAL(10,2)) TimeTakenInMinutes  from ScenarioHeader Sh
+    join RunHeader rh on sh.RunHeaderID = rh.RunHeaderID
+    where rh.RunName='{0}'
+    And sh.ScenarioRunStatus = 'Completed with errors'
+  </Query>
+  <Query Name="GetRegressionReport">
+    Select SH.scenarioHeaderId,Sh.ScenarioName,Sh.ModuleName,Sh.ScenarioRunStatus, sd.LogType,sd.data from ScenarioDetail SD
+    Join ScenarioHeader SH on SD.ScenarioHeaderID = SH.ScenarioHeaderID
+    Join RunHeader RH on RH.RunHeaderID=SH.RunHeaderID
+    WHere rh.RunName='{0}' and sd.category not in ('Dump','Datasets')
+    order by sd.scenarioDetailId desc
+  </Query>
+</Queries>
