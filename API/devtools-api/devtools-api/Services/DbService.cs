@@ -48,9 +48,14 @@ namespace devtools_api.Services
                 }
             }
 
-            testStatus.AverageTimeTaken = Math.Round(testStatus.TimeTaken.Average(), 2);
-            testStatus.TimeTakenForLastExecution = testStatus.TimeTaken.FirstOrDefault();
-            testStatus.AverageFailures = (decimal)Math.Round(testStatus.FailedCounts.Average(), 2);
+            if (testStatus.Labels.Count > 0)
+            {
+                testStatus.AverageTimeTaken = Math.Round(testStatus.TimeTaken.Average(), 2);
+                testStatus.TimeTakenForLastExecution = testStatus.TimeTaken.FirstOrDefault();
+                testStatus.AverageFailures = (decimal)Math.Round(testStatus.FailedCounts.Average(), 2);
+            }
+
+           
 
             return testStatus;
         }
